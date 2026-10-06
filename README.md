@@ -31,7 +31,7 @@ claude\
 **1. 构建便携环境**（需一台有 Node.js 的联网电脑，仅首次）
 
 ```bat
-git clone https://github.com/niganma12345/uclaude.git X:\claude
+git clone https://github.com/mzy-embedded/uclaude.git X:\claude
 cd /d X:\claude
 install.bat
 ```
