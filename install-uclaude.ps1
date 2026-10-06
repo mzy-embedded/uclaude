@@ -1,7 +1,9 @@
 # install-uclaude.ps1 -- install the "uclaude" launcher into PowerShell profiles.
 # Run from the U-disk copy  (drive letter does not matter):
 #   powershell -ExecutionPolicy Bypass -File X:\claude\install-uclaude.ps1
-# uclaude locates claude.bat by scanning drives for X:\claude\claude.bat.
+# uclaude prefers the claude.bat sitting next to this script, so a desktop copy
+# or any other folder works; it falls back to scanning drives for
+# X:\claude\claude.bat, so a USB stick survives a drive-letter change.
 # Safe to re-run: it replaces only the block marked by the banner comment.
 
 $ErrorActionPreference = 'Stop'
@@ -10,9 +12,13 @@ $ErrorActionPreference = 'Stop'
 $fn = @'
 function uclaude {
   $bat = $null
-  foreach ($d in 'C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z') {
-    $p = "${d}:\claude\claude.bat"
-    if (Test-Path $p -ErrorAction SilentlyContinue) { $bat = $p; break }
+  $preferred = '__UCLAUDE_BAT__'
+  if (Test-Path $preferred -ErrorAction SilentlyContinue) { $bat = $preferred }
+  if (-not $bat) {
+    foreach ($d in 'C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z') {
+      $p = "${d}:\claude\claude.bat"
+      if (Test-Path $p -ErrorAction SilentlyContinue) { $bat = $p; break }
+    }
   }
   if (-not $bat) {
     Write-Host 'uclaude: portable Claude not found.' -ForegroundColor Red
@@ -21,6 +27,11 @@ function uclaude {
   & $bat @args
 }
 '@
+
+# Bake in the absolute path of the copy this script was run from. Single quotes
+# inside the path are doubled so the injected literal stays valid PowerShell.
+$selfBat = Join-Path $PSScriptRoot 'claude.bat'
+$fn = $fn.Replace('__UCLAUDE_BAT__', $selfBat.Replace("'", "''"))
 
 $banner = '# Portable Claude Code launcher (U-disk edition)'
 

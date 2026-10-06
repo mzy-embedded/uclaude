@@ -36,6 +36,8 @@ cd /d X:\claude
 install.bat
 ```
 
+> 目录位置不限。`X:\claude` 是 U 盘场景的推荐做法；放 `D:\tools\claude`、桌面等任意路径也能用（见第 3 步的定位机制）。
+
 脚本会自动下载便携 Node v24.15.0 与 `@anthropic-ai/claude-code`，完成后默认密码为 `123456`，并已预置引导完成标志——首次启动不会出现欢迎页/选主题的交互引导，直接进入会话界面。
 
 **2. 配置 API 与密码**
@@ -49,7 +51,12 @@ config.bat
 
 **3. 给当前电脑装 `uclaude` 命令**
 
-双击 `install-uclaude.cmd`，看到 `uclaude installed` 即可。它会向 PowerShell 配置文件写入一个函数，自动扫描盘符定位 `claude.bat`，**盘符从 F: 变 E: 也无需改动**。
+双击 `install-uclaude.cmd`，看到 `uclaude installed` 即可。它会向 PowerShell 配置文件写入一个函数，定位 `claude.bat` 的顺序是：
+
+1. **先找当前这一份**（运行 `install-uclaude.cmd` 时所在目录）——所以放桌面、`D:\tools\claude` 等任意位置都能用
+2. 找不到时**回退到扫描盘符**（`X:\claude\claude.bat`）——**盘符从 F: 变 E: 也无需改动**
+
+> 注意：`uclaude` 指向**你最后一次运行 `install-uclaude.cmd` 的那一份**。若同时存在 U 盘和本地两份，想切换就重新运行目标那份的 `install-uclaude.cmd`。
 
 **4. 日常使用**
 
