@@ -40,6 +40,27 @@ install.bat
 
 脚本会自动下载便携 Node v24.15.0 与 `@anthropic-ai/claude-code`，完成后默认密码为 `123456`，并已预置引导完成标志——首次启动不会出现欢迎页/选主题的交互引导，直接进入会话界面。
 
+### install.bat 内部做了什么
+
+首次构建需要生成 `claude-code\`、`portable-node\`、`.claude\` 三个目录，**全部由这个脚本自动完成，无需手动创建任何一个**：
+
+| 步 | 动作 | 产出 |
+|---|---|---|
+| `[1/4]` | 从 npmmirror 下载 Node v24.15.0 解压 | `portable-node\`（约 103MB） |
+| `[2/4]` | `npm install --ignore-scripts @anthropic-ai/claude-code` | `claude-code\`（约 242MB） |
+| `[3/4]` | 准备 `.claude\` 配置，见下 | `.claude\` |
+| `[4/4]` | 重置安全核心：删除已有凭据，密码置为 `123456` | `core\.hash` |
+
+**前置条件**：本机已装 Node.js（脚本第一件事就是 `where npm`）、能访问 `registry.npmmirror.com`。
+
+`[3/4]` 内部有三个分支，按顺序执行：
+
+1. `.claude\settings.json` 不存在 且 本机有 `%USERPROFILE%\.claude` → 把本机配置拷进来（对方没装过 Claude Code 就跳过）
+2. `.claude\` 仍不存在 → `mkdir` 补上
+3. `.claude\.claude.json` 不存在 → 跑一次 `claude.exe doctor` 让它自举生成配置文件，再用便携 node 补上 `hasCompletedOnboarding` 标志
+
+> ⚠️ **不要在已经配置好的盘上重跑 `install.bat`。** `[2/4]` 没有"已存在则跳过"的守卫，每次都会重新下载 Claude Code；`[4/4]` 会把访问密码重置回 `123456` 并清空 API 配置——重跑等于把配置清零。要只重建某个目录，请手动处理，别用这个脚本。
+
 **2. 配置 API 与密码**
 
 ```bat
