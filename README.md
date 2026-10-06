@@ -36,7 +36,7 @@ cd /d X:\claude
 install.bat
 ```
 
-脚本会自动下载便携 Node v24.15.0 与 `@anthropic-ai/claude-code`，完成后默认密码为 `123456`。
+脚本会自动下载便携 Node v24.15.0 与 `@anthropic-ai/claude-code`，完成后默认密码为 `123456`，并已预置引导完成标志——首次启动不会出现欢迎页/选主题的交互引导，直接进入会话界面。
 
 **2. 配置 API 与密码**
 

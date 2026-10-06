@@ -29,13 +29,23 @@ pushd "%HOME%claude-code"
 call npm install --ignore-scripts @anthropic-ai/claude-code --registry=https://registry.npmmirror.com
 popd
 
-rem 3/4 拷贝本机配置 (仅首次, 不覆盖已有)
-echo [3/4] 拷贝 %USERPROFILE%\.claude 到 .claude\ ...
+rem 3/4 准备 .claude 配置 (仅首次: 拷贝本机配置 + 预置引导完成标志)
+echo [3/4] 准备 .claude 配置 ...
 if not exist "%HOME%.claude\settings.json" (
   if exist "%USERPROFILE%\.claude" xcopy /e /i /y "%USERPROFILE%\.claude" "%HOME%.claude\"
 ) else (
-  echo [3/4] .claude 已存在, 跳过
+  echo       .claude 已存在, 跳过拷贝
 )
+if not exist "%HOME%.claude" mkdir "%HOME%.claude"
+
+rem 首次启动会弹出交互式引导 欢迎页/选主题, 这里让 claude.exe 自举生成
+rem .claude.json, 再补上 hasCompletedOnboarding 标志以消除该引导。
+rem 若该标志的语义随版本变化, 最坏结果是引导重新出现, 不影响启动。
+if not exist "%HOME%.claude\.claude.json" (
+  set "CLAUDE_CONFIG_DIR=%HOME%.claude"
+  "%HOME%claude-code\node_modules\@anthropic-ai\claude-code-win32-x64\claude.exe" doctor <nul >nul 2>&1
+)
+"%HOME%portable-node\node.exe" -e "const fs=require('fs'),f=process.argv[1];try{const j=JSON.parse(fs.readFileSync(f,'utf8'));if(j.hasCompletedOnboarding===void 0){j.hasCompletedOnboarding=true;fs.writeFileSync(f,JSON.stringify(j,null,2))}}catch(e){}" "%HOME%.claude\.claude.json"
 
 rem 4/4 重置安全核心: 密码=123456, 删除API配置
 echo [4/4] 重置安全核心 ^(密码=123456, API 配置删除^) ...
