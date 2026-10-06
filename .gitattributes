@@ -1,0 +1,20 @@
+# ============================================================
+#  行尾锁定：保证任何人克隆后都能正确运行
+#  （.bat/.cmd 若为 LF，cmd.exe 解析 goto/label 会出错，必须 CRLF）
+# ============================================================
+
+# Windows 批处理与 PowerShell：强制 CRLF
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+
+# Node 脚本、文档、配置：统一 LF
+*.js    text eol=lf
+*.txt   text eol=lf
+*.md    text eol=lf
+*.json  text eol=lf
+
+# 禁止 Git 对二进制做差异/合并
+*.exe   binary
+*.dll   binary
+*.zip   binary

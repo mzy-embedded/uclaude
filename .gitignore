@@ -1,0 +1,29 @@
+# ============================================================
+#  Claude Code 便携版 —— 忽略清单
+#  本仓库只跟踪「启动器源码」，以下内容均可由 install.bat 重建，
+#  或属于本机私有数据 / 敏感凭据，一律不入库。
+# ============================================================
+
+# ---- 部署产物（运行 install.bat 自动下载重建）----
+/claude-code/
+/portable-node/
+
+# ---- 运行时数据：会话历史 / 插件缓存 / 遥测 / 临时态 ----
+#      含 projects(会话记录)、history.jsonl、telemetry、machineID 等私有信息
+/.claude/
+
+# ---- 安全核心：密码哈希与加密后的 API 凭据 ----
+/core/.hash
+/core/.cred
+
+# ---- Windows 系统垃圾文件 ----
+Thumbs.db
+Desktop.ini
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ---- 日志与临时文件 ----
+*.log
+*.tmp
+*.bak
